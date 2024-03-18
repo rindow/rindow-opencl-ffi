@@ -1,0 +1,31 @@
+name: tests
+
+on: [push]
+
+jobs:
+  no_ext_tests:
+    runs-on: ubuntu-22.04
+
+    strategy:
+      fail-fast: true
+      matrix:
+        php: ['8.1','8.2','8.3']
+  
+    steps:
+      - name: Checkout codes
+        uses: "actions/checkout@v4"
+
+      - name: Composer
+        uses: php-actions/composer@v6
+        with:
+          php_version: ${{ matrix.php }}
+          php_extensions: ffi
+
+      - name: PHPUnit Tests
+        uses: php-actions/phpunit@v3
+        with:
+          configuration: tests/phpunit.xml
+          version: 10.5
+          php_version: ${{ matrix.php }}
+          args: --filter ReleaseTest
+
