@@ -16,5 +16,6 @@
         "psr-4": {
             "Rindow\\OpenCL\\FFI\\": "src/"
         }
-    }
+    },
+    "bin": [ "bin/clinfo.bat" ]
 }

@@ -27,5 +27,5 @@ jobs:
           configuration: tests/phpunit.xml
           version: 10.5
           php_version: ${{ matrix.php }}
-          args: --filter ReleaseTest
+          filter: ReleaseTest
 
