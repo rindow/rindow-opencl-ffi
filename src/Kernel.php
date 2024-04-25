@@ -11,10 +11,7 @@ class Kernel
 {
     use Utils;
 
-    const CONSTRAINT_NONE = 0;
-    const CONSTRAINT_GREATER_OR_EQUAL_ZERO = 1;
-    const CONSTRAINT_GREATER_ZERO = 2;
-
+    /** @var array<int,string> $typeString */
     protected static $typeString = [
         NDArray::bool    => 'uint8_t',
         NDArray::int8    => 'int8_t',
@@ -32,7 +29,7 @@ class Kernel
     ];
 
     protected FFI $ffi;
-    protected object $kernel;
+    protected ?object $kernel;
 
     public function __construct(FFI $ffi,
         Program $program,
@@ -61,6 +58,7 @@ class Kernel
     {
         if($this->kernel) {
             $errcode_ret = $this->ffi->clReleaseKernel($this->kernel);
+            $this->kernel = null;
             if($errcode_ret!=OpenCL::CL_SUCCESS) {
                 echo "WARNING: clReleaseKernel error=$errcode_ret\n";
             }
@@ -71,7 +69,7 @@ class Kernel
         int $arg_index,
         mixed $arg,    // long | double | opencl_buffer_ce | command_queue_ce
         int $dtype=null,
-    )
+    ) : void
     {
         $ffi = $this->ffi;
         $dtype = $dtype ?? 0;
@@ -111,6 +109,11 @@ class Kernel
         }
     }
 
+    /**
+     * @param array<int> $global_work_size
+     * @param array<int> $local_work_size
+     * @param array<int> $global_work_offset
+     */
     public function enqueueNDRange(
         CommandQueue $command_queue,
         array $global_work_size,
@@ -118,7 +121,7 @@ class Kernel
         array $global_work_offset=null,
         EventList $events=null,
         EventList $wait_events=null,
-    )
+    ) : void
     {
         $ffi = $this->ffi;
         $errcode_ret = 0;
@@ -126,7 +129,7 @@ class Kernel
         $work_dim = 0;
         $global_work_size_p = $this->array_to_integers(
             $global_work_size, $work_dim,
-            self::CONSTRAINT_GREATER_ZERO,
+            $this->CONSTRAINT_GREATER_ZERO,
             $errcode_ret, no_throw:true,
         );
         if($errcode_ret!=OpenCL::CL_SUCCESS) {
@@ -138,7 +141,7 @@ class Kernel
             $tmp_dim=0;
             $local_work_size_p = $this->array_to_integers(
                 $local_work_size, $tmp_dim,
-                self::CONSTRAINT_GREATER_ZERO,
+                $this->CONSTRAINT_GREATER_ZERO,
                 $errcode_ret, no_throw:true,
             );
             if($errcode_ret!=OpenCL::CL_SUCCESS) {
@@ -154,7 +157,7 @@ class Kernel
             $tmp_dim=0;
             $global_work_offset_p = $this->array_to_integers(
                 $global_work_offset, $tmp_dim,
-                self::CONSTRAINT_GREATER_ZERO,
+                $this->CONSTRAINT_GREATER_ZERO,
                 $errcode_ret, no_throw:true,
             );
             if($errcode_ret!=OpenCL::CL_SUCCESS) {
@@ -200,7 +203,7 @@ class Kernel
     
     public function getInfo(
         int $param_name,
-        )
+        ) : mixed
     {
         $ffi = $this->ffi;
     
@@ -279,7 +282,7 @@ class Kernel
     public function getWorkGroupInfo(
         int $param_name,
         DeviceList $device_list=null,
-    )
+    ) : mixed
     {
         $ffi = $this->ffi;
     

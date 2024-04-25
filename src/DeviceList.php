@@ -31,7 +31,7 @@ class DeviceList implements Countable
             return;
         }
         if($index<0 || $index>=count($platforms)) {
-            throw new OutOfRangeException("Invalid index of platforms: $offset");
+            throw new OutOfRangeException("Invalid index of platforms: $index");
         }
         if($device_type==0) {
             $device_type = OpenCL::CL_DEVICE_TYPE_ALL;
@@ -83,7 +83,6 @@ class DeviceList implements Countable
         if($offset<0 || $offset>=$this->num) {
             throw new OutOfRangeException("Invalid index of devices: $offset");
         }
-        $this->devices[$offset];
         $devices = $ffi->new("cl_device_id[1]");
         $devices[0] = $this->devices[$offset];
         $dummy = new PlatformList($ffi,$ffi->new("cl_platform_id[1]"));

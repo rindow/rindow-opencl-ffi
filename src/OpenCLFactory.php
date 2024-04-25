@@ -12,9 +12,14 @@ use RuntimeException;
 class OpenCLFactory
 {
     private static ?FFI $ffi = null;
+    /** @var array<string> $libs_win */
     protected array $libs_win = ['OpenCL.dll'];
+    /** @var array<string> $libs_linux */
     protected array $libs_linux = ['libOpenCL.so.1'];
 
+    /**
+     * @param array<string> $libFiles
+     */
     public function __construct(
         string $headerFile=null,
         array $libFiles=null,
@@ -120,6 +125,9 @@ class OpenCLFactory
         return new CommandQueue(self::$ffi, $context, $deviceId, $properties);
     }
 
+    /**
+     * @param string|array<string>|array<string,object> $source
+     */
     public function Program(
         Context $context,
         string|array $source,   // string or list of something

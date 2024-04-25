@@ -1,0 +1,10 @@
+includes:
+	- phpstan-interop.neon
+	
+parameters:
+	level: 6
+	paths:
+		- src
+	ignoreErrors:
+		-
+			message: "#^Call to an undefined method FFI::#"

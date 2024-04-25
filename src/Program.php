@@ -16,11 +16,14 @@ class Program
     const TYPE_COMPILED_PROGRAM = 3;
 
     protected FFI $ffi;
-    protected object $context;
+    protected ?object $context;
     //protected int $num_devices;
     //protected object $devices;
-    protected object $program;
+    protected ?object $program;
 
+    /**
+     * @param string|array<string>|array<string,object> $source
+     */
     public function __construct(FFI $ffi,
         Context $context,
         string|array $source,   // string or list of something
@@ -131,6 +134,7 @@ class Program
     {
         if($this->program) {
             $errcode_ret = $this->ffi->clReleaseProgram($this->program);
+            $this->program = null;
             if($errcode_ret!=OpenCL::CL_SUCCESS) {
                 echo "WARNING: clReleaseProgram error=$errcode_ret\n";
             }
@@ -174,6 +178,9 @@ class Program
     }
 
 #ifdef CL_VERSION_1_2
+    /**
+     * @param array<string,object> $headers
+     */
     public function compile(
         array $headers=null,        // ArrayHash<Program> Key:file path Value:program
         string $options=null,       // string
@@ -190,7 +197,7 @@ class Program
         $devices = null;
         $num_devices = 0;
         if($device_list) {
-            $devices = $device_list_obj->_getIds();
+            $devices = $device_list->_getIds();
             $num_devices = count($devices);
         }
         $errcode_ret = $ffi->clCompileProgram(

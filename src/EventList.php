@@ -139,7 +139,7 @@ class EventList implements Countable
         $this->num = $num;
     }
 
-    public function setStatus(int $execution_status, int $index=null)
+    public function setStatus(int $execution_status, int $index=null) : void
     {
         $ffi = $this->ffi;
         $index = $index ?? 0;

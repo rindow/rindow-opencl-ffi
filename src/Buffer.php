@@ -14,10 +14,7 @@ class Buffer implements DeviceBuffer
 {
     use Utils;
     
-    const CONSTRAINT_NONE = 0;
-    const CONSTRAINT_GREATER_OR_EQUAL_ZERO = 1;
-    const CONSTRAINT_GREATER_ZERO = 2;
-
+    /** @var array<int,int> $valueSize */
     protected static $valueSize = [
         NDArray::bool    => 1,
         NDArray::int8    => 1,
@@ -39,7 +36,7 @@ class Buffer implements DeviceBuffer
     ];
 
     protected FFI $ffi;
-    protected object $buffer;  // cl_mem
+    protected ?object $buffer;  // cl_mem
     protected int $size;       // size_t
     protected int $dtype=0;      // int
     protected int $value_size=0; // size_t
@@ -98,6 +95,7 @@ class Buffer implements DeviceBuffer
     {
         if($this->buffer) {
             $errcode_ret = $this->ffi->clReleaseMemObject($this->buffer);
+            $this->buffer = null;
             if($errcode_ret!=OpenCL::CL_SUCCESS) {
                 echo "WARNING: clReleaseMemObject error=$errcode_ret\n";
             }
@@ -186,6 +184,11 @@ class Buffer implements DeviceBuffer
         }
     }
 
+    /**
+     * @param array<int> $region
+     * @param array<int> $buffer_offset
+     * @param array<int> $host_offset
+     */
     public function readRect(
         CommandQueue $command_queue,
         HostBuffer $host_buffer,      
@@ -200,7 +203,7 @@ class Buffer implements DeviceBuffer
         bool $blocking_read=NULL,
         EventList $events=NULL,
         EventList $wait_events=NULL,
-    )
+    ) : void
     {
         $host_buffer_offset = $host_buffer_offset ?? 0;
         $buffer_row_pitch = $buffer_row_pitch ?? 0;
@@ -215,7 +218,7 @@ class Buffer implements DeviceBuffer
         $tmp_dim = 3;
         $region = $this->array_to_integers(
             $region, $tmp_dim, 
-            self::CONSTRAINT_GREATER_ZERO,
+            $this->CONSTRAINT_GREATER_ZERO,
             $errcode_ret, no_throw:true);
 
         if($errcode_ret!=OpenCL::CL_SUCCESS) {
@@ -231,7 +234,7 @@ class Buffer implements DeviceBuffer
             $tmp_dim = 3;
             $buffer_offsets = $this->array_to_integers(
                 $buffer_offset, $tmp_dim,
-                self::CONSTRAINT_GREATER_OR_EQUAL_ZERO,
+                $this->CONSTRAINT_GREATER_OR_EQUAL_ZERO,
                 $errcode_ret, no_throw:true
             );
             if($errcode_ret!=OpenCL::CL_SUCCESS) {
@@ -245,8 +248,8 @@ class Buffer implements DeviceBuffer
         if($host_offset) {
             $tmp_dim = 3;
             $host_offsets = $this->array_to_integers(
-                $host_offsets, $tmp_dim,
-                self::CONSTRAINT_GREATER_OR_EQUAL_ZERO,
+                $host_offset, $tmp_dim,
+                $this->CONSTRAINT_GREATER_OR_EQUAL_ZERO,
                 $errcode_ret, no_throw:true
             );
             if($errcode_ret!=OpenCL::CL_SUCCESS) {
@@ -404,6 +407,11 @@ class Buffer implements DeviceBuffer
         }
     }
 
+    /**
+     * @param array<int> $region
+     * @param array<int> $buffer_offset
+     * @param array<int> $host_offset
+     */
     public function writeRect(
         CommandQueue $command_queue,
         HostBuffer $host_buffer,
@@ -418,7 +426,7 @@ class Buffer implements DeviceBuffer
         bool $blocking_write=null,
         EventList $events=null,
         EventList $wait_events=null,
-    )
+    ) : void
     {
         $host_buffer_offset = $host_buffer_offset ?? 0;
         $buffer_row_pitch = $buffer_row_pitch ?? 0;
@@ -434,7 +442,7 @@ class Buffer implements DeviceBuffer
             $tmp_dim = 3;
             $region = $this->array_to_integers(
                 $region, $tmp_dim,
-                self::CONSTRAINT_GREATER_ZERO,
+                $this->CONSTRAINT_GREATER_ZERO,
                 $errcode_ret, no_throw:true
             );
             if($errcode_ret!=OpenCL::CL_SUCCESS) {
@@ -451,7 +459,7 @@ class Buffer implements DeviceBuffer
             $tmp_dim = 3;
             $buffer_offsets = $this->array_to_integers(
                 $buffer_offset, $tmp_dim,
-                self::CONSTRAINT_GREATER_OR_EQUAL_ZERO,
+                $this->CONSTRAINT_GREATER_OR_EQUAL_ZERO,
                 $errcode_ret, no_throw:true
             );
             if($errcode_ret!=OpenCL::CL_SUCCESS) {
@@ -466,7 +474,7 @@ class Buffer implements DeviceBuffer
             $tmp_dim = 3;
             $host_offsets = $this->array_to_integers(
                 $host_offset, $tmp_dim,
-                self::CONSTRAINT_GREATER_OR_EQUAL_ZERO,
+                $this->CONSTRAINT_GREATER_OR_EQUAL_ZERO,
                 $errcode_ret, no_throw:true
             );
             if($errcode_ret!=OpenCL::CL_SUCCESS) {
@@ -570,10 +578,8 @@ class Buffer implements DeviceBuffer
         int $pattern_offset=null,
         EventList $events=null,
         EventList $wait_events=null,
-    )
+    ) : void
     {
-        $blocking_write = $blocking_write ?? true;
-        $blocking_write = $blocking_write ? 1:0;
         $size = $size ?? 0;
         $offset = $offset ?? 0;
         $pattern_size = $pattern_size ?? 0;
@@ -650,7 +656,7 @@ class Buffer implements DeviceBuffer
         int $dst_offset=null,
         EventList $events=null,
         EventList $wait_events=null,
-    )
+    ) : void
     {
         $size = $size ?? 0;
         $src_offset = $src_offset ?? 0;
@@ -686,7 +692,7 @@ class Buffer implements DeviceBuffer
         if($errcode_ret!=OpenCL::CL_SUCCESS) {
             throw new RuntimeException("clEnqueueWriteBuffer Error errcode=".$errcode_ret, $errcode_ret);
         }
-        if($this->dtype===null || $this->dtype==0) {
+        if($this->dtype==0) {
             $this->dtype = $src_buffer->dtype();
             $this->value_size = $src_buffer->value_size();
         }
@@ -697,6 +703,11 @@ class Buffer implements DeviceBuffer
         }
     }
 
+    /**
+     * @param array<int> $region
+     * @param array<int> $src_origin
+     * @param array<int> $dst_origin
+     */
     public function copyRect(
         CommandQueue $command_queue,
         Buffer $src_buffer,
@@ -709,7 +720,7 @@ class Buffer implements DeviceBuffer
         int $dst_slice_pitch=null,
         EventList $events=null,
         EventList $wait_events=null,
-    )
+    ) : void
     {
         $src_row_pitch = $src_row_pitch ?? 0;
         $src_slice_pitch = $src_slice_pitch ?? 0;
@@ -722,7 +733,7 @@ class Buffer implements DeviceBuffer
             $tmp_dim = 3;
             $region = $this->array_to_integers(
                 $region, $tmp_dim,
-                self::CONSTRAINT_GREATER_ZERO,
+                $this->CONSTRAINT_GREATER_ZERO,
                 $errcode_ret, no_throw:true
             );
             if($errcode_ret!=OpenCL::CL_SUCCESS) {
@@ -739,7 +750,7 @@ class Buffer implements DeviceBuffer
             $tmp_dim = 3;
             $src_origins = $this->array_to_integers(
                 $src_origin, $tmp_dim,
-                self::CONSTRAINT_GREATER_OR_EQUAL_ZERO,
+                $this->CONSTRAINT_GREATER_OR_EQUAL_ZERO,
                 $errcode_ret, no_throw:true
             );
             if($errcode_ret!=OpenCL::CL_SUCCESS) {
@@ -754,7 +765,7 @@ class Buffer implements DeviceBuffer
             $tmp_dim = 3;
             $dst_origins = $this->array_to_integers(
                 $dst_origin, $tmp_dim,
-                self::CONSTRAINT_GREATER_OR_EQUAL_ZERO,
+                $this->CONSTRAINT_GREATER_OR_EQUAL_ZERO,
                 $errcode_ret, no_throw:true
             );
             if($errcode_ret!=OpenCL::CL_SUCCESS) {
@@ -847,7 +858,7 @@ class Buffer implements DeviceBuffer
 
     public function getInfo(
         int $param_name,
-        )
+        ) : mixed
     {
         $ffi = $this->ffi;
         $id = $this->buffer;

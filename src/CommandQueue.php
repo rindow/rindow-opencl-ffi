@@ -9,7 +9,7 @@ use FFI;
 class CommandQueue
 {
     protected FFI $ffi;
-    protected object $command_queue;
+    protected ?object $command_queue;
     protected Context $context;
 
     public function __construct(FFI $ffi,
@@ -22,7 +22,7 @@ class CommandQueue
         if($device_id===null) {
             $device = $context->_getDeviceIds();
             if($device==NULL) {
-                throw new InvalidArgumentException("Context is not initialized", CL_INVALID_CONTEXT);
+                throw new InvalidArgumentException("Context is not initialized");
             }
             $device = $device[0];
         } else {
@@ -46,6 +46,7 @@ class CommandQueue
     {
         if($this->command_queue) {
             $errcode_ret = $this->ffi->clReleaseCommandQueue($this->command_queue);
+            $this->command_queue = null;
             if($errcode_ret!=0) {
                 throw new RuntimeException("clReleaseCommandQueue Error errcode=".$errcode_ret);
             }
@@ -82,7 +83,7 @@ class CommandQueue
         }
     }
 
-    public function getInfo(int $param_name)
+    public function getInfo(int $param_name) : mixed
     {
         $ffi = $this->ffi;
 

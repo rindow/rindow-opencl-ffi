@@ -35,12 +35,12 @@ On Windows, you can use OpenCL without doing anything.
 
 On Linux, install ICL Loader and the driver appropriate for your hardware.
 
-For example, in the case of Ubuntu standard AMD driver, install as follows
+For example, in the case of Linux standard AMD driver, install as follows
 ```shell
 $ sudo apt install clinfo
 $ sudo apt install mesa-opencl-icd
 ```
-Ubuntu standard OpenCL drivers include:
+Linux standard OpenCL drivers include:
 - mesa-opencl-icd
 - beignet-opencl-icd
 - intel-opencl-icd

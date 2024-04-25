@@ -58,7 +58,6 @@ class PlatformList implements Countable
         if($offset<0 || $offset>=$this->num) {
             throw new OutOfRangeException("Invalid index of platforms: $offset");
         }
-        $this->platforms[$offset];
         $platforms = $ffi->new("cl_platform_id[1]");
         $platforms[0] = $this->platforms[$offset];
         $obj = new self($ffi,$platforms);
