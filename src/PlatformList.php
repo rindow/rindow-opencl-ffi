@@ -14,7 +14,7 @@ class PlatformList implements Countable
     protected int $num;
     protected object $platforms;
 
-    public function __construct(FFI $ffi, object $platforms=NULL)
+    public function __construct(FFI $ffi, ?object $platforms=NULL)
     {
         $this->ffi = $ffi;
         if($platforms!==NULL) {

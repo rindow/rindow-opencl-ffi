@@ -14,8 +14,8 @@ class CommandQueue
 
     public function __construct(FFI $ffi,
         Context $context,
-        object $device_id=null,
-        object $properties=null,
+        ?object $device_id=null,
+        ?object $properties=null,
         )
     {
         $this->ffi = $ffi;

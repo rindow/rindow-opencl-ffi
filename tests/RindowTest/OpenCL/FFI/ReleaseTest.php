@@ -12,8 +12,10 @@ class ReleaseTest extends TestCase
     {
         $factory = new OpenCLFactory();
         if(extension_loaded('ffi')) {
-            $platforms = $factory->PlatformList();
-            $this->assertInstanceof(PlatformList::class,$platforms);
+            if($factory->isAvailable()) {
+                $platforms = $factory->PlatformList();
+                $this->assertInstanceof(PlatformList::class,$platforms);
+            }
         } else {
             $this->assertFalse($factory->isAvailable());
         }

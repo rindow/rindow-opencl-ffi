@@ -18,7 +18,7 @@ Please see the documents about Buffer objects on [Rindow Mathematics](https://ri
 Requirements
 ============
 
-- PHP 8.1 or PHP8.2 or PHP8.3
+- PHP 8.1 or PHP8.2 or PHP8.3 or PHP8.4
 - interop-phpobjects/polite-math 1.0.5 or later
 - FFI-Buffer in the Interop php objects for Math. (ex. rindow/rindow-math-buffer-ffi)
 - OpenCL 1.2 ICL loader and OpenCL 1.1/1.2 drivers

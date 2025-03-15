@@ -1,5 +1,6 @@
 includes:
 	- phpstan-interop.neon
+	- phpstan-baseline.neon
 	
 parameters:
 	level: 6

@@ -45,10 +45,10 @@ class Buffer implements DeviceBuffer
     public function __construct(FFI $ffi,
         Context $context,
         int $size,
-        int $flags=null,
-        HostBuffer $host_buffer=null,
-        int $host_offset=null,
-        int $dtype=null,
+        ?int $flags=null,
+        ?HostBuffer $host_buffer=null,
+        ?int $host_offset=null,
+        ?int $dtype=null,
         )
     {
         $flags = $flags ?? 0;
@@ -125,12 +125,12 @@ class Buffer implements DeviceBuffer
     public function read(
         CommandQueue $command_queue,
         HostBuffer $host_buffer,      
-        int $size=null,
-        int $offset=null,
-        int $host_offset=null,
-        bool $blocking_read=null,
-        EventList $events=null,
-        EventList $wait_events=null,
+        ?int $size=null,
+        ?int $offset=null,
+        ?int $host_offset=null,
+        ?bool $blocking_read=null,
+        ?EventList $events=null,
+        ?EventList $wait_events=null,
     ) : void
     {
         $size = $size ?? 0;
@@ -193,16 +193,16 @@ class Buffer implements DeviceBuffer
         CommandQueue $command_queue,
         HostBuffer $host_buffer,      
         array $region,
-        int $host_buffer_offset=NULL,
-        array $buffer_offset=NULL,
-        array $host_offset=NULL,
-        int $buffer_row_pitch=NULL,
-        int $buffer_slice_pitch=NULL,
-        int $host_row_pitch=NULL,
-        int $host_slice_pitch=NULL,
-        bool $blocking_read=NULL,
-        EventList $events=NULL,
-        EventList $wait_events=NULL,
+        ?int $host_buffer_offset=NULL,
+        ?array $buffer_offset=NULL,
+        ?array $host_offset=NULL,
+        ?int $buffer_row_pitch=NULL,
+        ?int $buffer_slice_pitch=NULL,
+        ?int $host_row_pitch=NULL,
+        ?int $host_slice_pitch=NULL,
+        ?bool $blocking_read=NULL,
+        ?EventList $events=NULL,
+        ?EventList $wait_events=NULL,
     ) : void
     {
         $host_buffer_offset = $host_buffer_offset ?? 0;
@@ -346,12 +346,12 @@ class Buffer implements DeviceBuffer
     public function write(
         CommandQueue $command_queue,
         HostBuffer $host_buffer,
-        int $size=null,
-        int $offset=null,
-        int $host_offset=null,
-        bool $blocking_write=null,
-        EventList $events=null,
-        EventList $wait_events=null,
+        ?int $size=null,
+        ?int $offset=null,
+        ?int $host_offset=null,
+        ?bool $blocking_write=null,
+        ?EventList $events=null,
+        ?EventList $wait_events=null,
     ) : void
     {
         $size = $size ?? 0;
@@ -416,16 +416,16 @@ class Buffer implements DeviceBuffer
         CommandQueue $command_queue,
         HostBuffer $host_buffer,
         array $region,
-        int $host_buffer_offset=null,
-        array $buffer_offset=null,
-        array $host_offset=null,
-        int $buffer_row_pitch=null,
-        int $buffer_slice_pitch=null,
-        int $host_row_pitch=null,
-        int $host_slice_pitch=null,
-        bool $blocking_write=null,
-        EventList $events=null,
-        EventList $wait_events=null,
+        ?int $host_buffer_offset=null,
+        ?array $buffer_offset=null,
+        ?array $host_offset=null,
+        ?int $buffer_row_pitch=null,
+        ?int $buffer_slice_pitch=null,
+        ?int $host_row_pitch=null,
+        ?int $host_slice_pitch=null,
+        ?bool $blocking_write=null,
+        ?EventList $events=null,
+        ?EventList $wait_events=null,
     ) : void
     {
         $host_buffer_offset = $host_buffer_offset ?? 0;
@@ -572,12 +572,12 @@ class Buffer implements DeviceBuffer
     public function fill(
         CommandQueue $command_queue,
         HostBuffer $pattern_buffer,
-        int $size=null,
-        int $offset=null,
-        int $pattern_size=null,
-        int $pattern_offset=null,
-        EventList $events=null,
-        EventList $wait_events=null,
+        ?int $size=null,
+        ?int $offset=null,
+        ?int $pattern_size=null,
+        ?int $pattern_offset=null,
+        ?EventList $events=null,
+        ?EventList $wait_events=null,
     ) : void
     {
         $size = $size ?? 0;
@@ -651,11 +651,11 @@ class Buffer implements DeviceBuffer
     public function copy(
         CommandQueue $command_queue,
         self $src_buffer,
-        int $size=null,
-        int $src_offset=null,
-        int $dst_offset=null,
-        EventList $events=null,
-        EventList $wait_events=null,
+        ?int $size=null,
+        ?int $src_offset=null,
+        ?int $dst_offset=null,
+        ?EventList $events=null,
+        ?EventList $wait_events=null,
     ) : void
     {
         $size = $size ?? 0;
@@ -712,14 +712,14 @@ class Buffer implements DeviceBuffer
         CommandQueue $command_queue,
         Buffer $src_buffer,
         array $region,
-        array $src_origin=null,
-        array $dst_origin=null,
-        int $src_row_pitch=null,
-        int $src_slice_pitch=null,
-        int $dst_row_pitch=null,
-        int $dst_slice_pitch=null,
-        EventList $events=null,
-        EventList $wait_events=null,
+        ?array $src_origin=null,
+        ?array $dst_origin=null,
+        ?int $src_row_pitch=null,
+        ?int $src_slice_pitch=null,
+        ?int $dst_row_pitch=null,
+        ?int $dst_slice_pitch=null,
+        ?EventList $events=null,
+        ?EventList $wait_events=null,
     ) : void
     {
         $src_row_pitch = $src_row_pitch ?? 0;

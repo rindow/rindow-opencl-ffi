@@ -27,9 +27,9 @@ class Program
     public function __construct(FFI $ffi,
         Context $context,
         string|array $source,   // string or list of something
-        int $mode=null,         // mode  0:source codes, 1:binary, 2:built-in kernel, 3:linker
-        DeviceList $device_list=null,
-        string $options=null,
+        ?int $mode=null,         // mode  0:source codes, 1:binary, 2:built-in kernel, 3:linker
+        ?DeviceList $device_list=null,
+        ?string $options=null,
     )
     {
         $this->ffi = $ffi;
@@ -147,8 +147,8 @@ class Program
     }
 
     public function build(
-        string $options=NULL,
-        DeviceList $device_list=NULL,
+        ?string $options=NULL,
+        ?DeviceList $device_list=NULL,
     ) : void
     {
         $ffi = $this->ffi;
@@ -182,9 +182,9 @@ class Program
      * @param array<string,object> $headers
      */
     public function compile(
-        array $headers=null,        // ArrayHash<Program> Key:file path Value:program
-        string $options=null,       // string
-        DeviceList $device_list=null,// DeviceList
+        ?array $headers=null,        // ArrayHash<Program> Key:file path Value:program
+        ?string $options=null,       // string
+        ?DeviceList $device_list=null,// DeviceList
         ) : void
     {
         $ffi = $this->ffi;
@@ -331,8 +331,8 @@ class Program
 
     public function getBuildInfo(
         int $param_name,
-        DeviceList $device_list=null,
-        int $device_index=null,
+        ?DeviceList $device_list=null,
+        ?int $device_index=null,
     ) : mixed
     {
         $ffi = $this->ffi;

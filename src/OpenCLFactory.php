@@ -21,8 +21,8 @@ class OpenCLFactory
      * @param array<string> $libFiles
      */
     public function __construct(
-        string $headerFile=null,
-        array $libFiles=null,
+        ?string $headerFile=null,
+        ?array $libFiles=null,
         )
     {
         if(self::$ffi!==null) {
@@ -83,8 +83,8 @@ class OpenCLFactory
 
     public function DeviceList(
         PlatformList $platforms,
-        int $index=NULL,
-        int $deviceType=NULL,
+        ?int $index=NULL,
+        ?int $deviceType=NULL,
     ) : DeviceList
     {
         if(self::$ffi==null) {
@@ -104,7 +104,7 @@ class OpenCLFactory
     }
 
     public function EventList(
-        Context $context=null
+        ?Context $context=null
     ) : EventList
     {
         if(self::$ffi==null) {
@@ -115,8 +115,8 @@ class OpenCLFactory
 
     public function CommandQueue(
         Context $context,
-        object $deviceId=null,
-        object $properties=null,
+        ?object $deviceId=null,
+        ?object $properties=null,
     ) : CommandQueue
     {
         if(self::$ffi==null) {
@@ -131,9 +131,9 @@ class OpenCLFactory
     public function Program(
         Context $context,
         string|array $source,   // string or list of something
-        int $mode=null,         // mode  0:source codes, 1:binary, 2:built-in kernel, 3:linker
-        DeviceList $deviceList=null,
-        string $options=null,
+        ?int $mode=null,         // mode  0:source codes, 1:binary, 2:built-in kernel, 3:linker
+        ?DeviceList $deviceList=null,
+        ?string $options=null,
         ) : Program
     {
         if(self::$ffi==null) {
@@ -145,10 +145,10 @@ class OpenCLFactory
     public function Buffer(
         Context $context,
         int $size,
-        int $flags=null,
-        HostBuffer $hostBuffer=null,
-        int $hostOffset=null,
-        int $dtype=null,
+        ?int $flags=null,
+        ?HostBuffer $hostBuffer=null,
+        ?int $hostOffset=null,
+        ?int $dtype=null,
         ) : Buffer
     {
         if(self::$ffi==null) {

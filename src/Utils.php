@@ -20,7 +20,7 @@ trait Utils
         int &$size, 
         int $constraint, 
         int &$errcode_ret,
-        bool $no_throw=null,
+        ?bool $no_throw=null,
         ) : object
     {
         $ffi = $this->ffi;
@@ -102,7 +102,7 @@ trait Utils
      */
     protected function array_to_programs(
         array $array_val,
-        bool $with_names=null,
+        ?bool $with_names=null,
         ) : array
     {
         $ffi = $this->ffi;

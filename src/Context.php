@@ -15,7 +15,7 @@ class Context
 
     public function __construct(FFI $ffi,
         DeviceList|int $arg,
-        object $context=null)
+        ?object $context=null)
     {
         $this->ffi = $ffi;
         if($context!=null) {
@@ -104,7 +104,7 @@ class Context
             $errcode_ret
         );
         if($errcode_ret!=OpenCL::CL_SUCCESS) {
-            throw new RuntimeException("clGetContextInfo Error errcode=".$errcode_ret[0]);
+            throw new RuntimeException("clGetContextInfo Error errcode=".$errcode_ret);
         }
     
         $this->context = $context;

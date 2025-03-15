@@ -14,7 +14,7 @@ class EventList implements Countable
     protected ?object $events=null;
 
     public function __construct(FFI $ffi,
-        Context $context=NULL
+        ?Context $context=NULL
         )
     {
         $this->ffi = $ffi;
@@ -46,7 +46,7 @@ class EventList implements Countable
         return $this->ffi;
     }
 
-    public function _getIds(bool $move=null) : object
+    public function _getIds(?bool $move=null) : object
     {
         $events = $this->events;
         if($move) {
@@ -139,7 +139,7 @@ class EventList implements Countable
         $this->num = $num;
     }
 
-    public function setStatus(int $execution_status, int $index=null) : void
+    public function setStatus(int $execution_status, ?int $index=null) : void
     {
         $ffi = $this->ffi;
         $index = $index ?? 0;

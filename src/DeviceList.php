@@ -16,9 +16,9 @@ class DeviceList implements Countable
 
     public function __construct(FFI $ffi,
         PlatformList $platforms,
-        int $index=NULL,
-        int $device_type=NULL,
-        object $devices=NULL,
+        ?int $index=NULL,
+        ?int $device_type=NULL,
+        ?object $devices=NULL,
         )
     {
         $this->ffi = $ffi;
