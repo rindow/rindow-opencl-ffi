@@ -9,7 +9,7 @@
         "interop-phpobjects/polite-math": "~1.0.7"
     },
     "require-dev": {
-        "rindow/rindow-math-buffer-ffi": "~1.0.0",
+        "rindow/rindow-math-buffer-ffi": "^1.0",
         "ext-ffi": "*"
     },
     "autoload": {
@@ -17,5 +17,5 @@
             "Rindow\\OpenCL\\FFI\\": "src/"
         }
     },
-    "bin": [ "bin/clinfo.bat" ]
+    "bin": [ "bin/clinfo" ]
 }
