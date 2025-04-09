@@ -6,7 +6,7 @@ on:
           - main
 
 jobs:
-  no_ext_tests:
+  tests:
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -25,6 +25,14 @@ jobs:
             os: ubuntu-latest
             php: '8.4'
             phpunit: '11.5'
+          - name: Windows
+            os: windows-latest
+            php: '8.4'
+            phpunit: '11.5'
+          - name: macOS
+            os: macos-latest
+            php: '8.4'
+            phpunit: '11.5'
   
     steps:
       - name: Setup PHP ${{ matrix.php }}
@@ -33,43 +41,22 @@ jobs:
           php-version: ${{ matrix.php }}
           # PHP Extras
           coverage: none
-          tools: composer, phpunit:${{ matrix.phpunit }}, phpstan
+          tools: composer, phpstan
           #ini-values: "memory_limit=512M"
-          extensions: ffi
-
-      #- name: Install OpenBLAS
-      #  run: |
-      #    sudo apt install -y clinfo
-      #    sudo apt install -y pocl-opencl-icd
+          extensions: ffi, mbstring
+        env:
+          fail-fast: true
 
       - name: Checkout codes
         uses: "actions/checkout@v4"
 
-      #- name: Composer
-      #  uses: php-actions/composer@v6
-      #  with:
-      #    php_version: ${{ matrix.php }}
-      #    php_extensions: ffi
-
       - name: Composer
-        run: composer update
-
-      #- name: PHP Static Analysys
-      #  uses: php-actions/phpstan@v3
-      #  with:
-      #    php_version: ${{ matrix.php }}
-      #    path: src/
+        run: |
+          composer update
+          composer require --dev phpunit/phpunit=^${{ matrix.phpunit }}
 
       - name: PHP Static Analysys
         run: phpstan
 
-      #- name: PHPUnit Tests
-      #  uses: php-actions/phpunit@v3
-      #  with:
-      #    configuration: tests/phpunit.xml
-      #    version: ${{ matrix.phpunit }}
-      #    php_version: ${{ matrix.php }}
-      #    filter: ReleaseTest
-
       - name: PHPUnit Tests
-        run: phpunit -c tests --filter ReleaseTest
+        run: vendor/bin/phpunit -c tests --filter ReleaseTest

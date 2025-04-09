@@ -6,10 +6,10 @@
     "license": "BSD-3-Clause",
     "require": {
         "php": "^8.1",
-        "interop-phpobjects/polite-math": "~1.0.7"
+        "interop-phpobjects/polite-math": "^1.0.7"
     },
     "require-dev": {
-        "rindow/rindow-math-buffer-ffi": "^1.0",
+        "rindow/rindow-math-buffer-ffi": "^1.0.5",
         "ext-ffi": "*"
     },
     "autoload": {

@@ -11,11 +11,21 @@ use RuntimeException;
 
 class OpenCLFactory
 {
+    const STAUTS_OK = 0;
+    const STAUTS_LIBRARY_NOT_LOADED = -1;
+    const STATUS_CONFIGURATION_NOT_COMPLETE = -2;
+    const STATUS_DEVICE_NOT_FOUND = -3;
+    
     private static ?FFI $ffi = null;
+    private static ?string $statusMessage = null;
+    private static int $status = 0;
+
     /** @var array<string> $libs_win */
     protected array $libs_win = ['OpenCL.dll'];
     /** @var array<string> $libs_linux */
     protected array $libs_linux = ['libOpenCL.so.1'];
+    /** @var array<string> $libs_mac */
+    protected array $libs_mac = ['/System/Library/Frameworks/OpenCL.framework/OpenCL'];
 
     /**
      * @param array<string> $libFiles
@@ -37,46 +47,64 @@ class OpenCLFactory
                 $libFiles = $this->libs_linux;
             } elseif(PHP_OS=='WINNT') {
                 $libFiles = $this->libs_win;
+            } elseif(PHP_OS=='Darwin') {
+                $libFiles = $this->libs_mac;
             } else {
                 throw new RuntimeException('Unknown operating system: "'.PHP_OS.'"');
             }
         }
-        //$ffi = FFI::load($headerFile);
         $code = file_get_contents($headerFile);
-        // ***************************************************************
-        // FFI Locator is incompletely implemented. It is often not found.
-        // ***************************************************************
-        //$pathname = FFIEnvLocator::resolve(...$libFiles);
-        //if($pathname) {
-        //    $ffi = FFI::cdef($code,$pathname);
-        //    self::$ffi = $ffi;
-        //}
         foreach ($libFiles as $filename) {
             try {
                 $ffi = FFI::cdef($code,$filename);
             } catch(FFIException $e) {
+                if(self::$status>self::STAUTS_LIBRARY_NOT_LOADED) {
+                    self::$statusMessage = 'OpenCL library not loaded.';
+                }
+                continue;
+            }
+            $platforms = null;
+            try {
+                $platforms = new PlatformList($ffi);
+            } catch(RuntimeException $e) {
+                if(self::$status>self::STATUS_CONFIGURATION_NOT_COMPLETE) {
+                    self::$statusMessage = 'OpenCL configuration is not complete.';
+                }
+                continue;
+            }
+            try {
+                $dmy = new DeviceList($ffi,$platforms);
+            } catch(RuntimeException $e) {
+                if(self::$status>self::STATUS_DEVICE_NOT_FOUND) {
+                    self::$statusMessage = 'OpenCL device is not found.';
+                }
                 continue;
             }
             self::$ffi = $ffi;
+            self::$status = self::STAUTS_OK;
             break;
         }
+    }
+
+    public function getStatus() : int
+    {
+        return self::$status;
+    }
+
+    public function getStatusMessage() : string
+    {
+        return self::$statusMessage??'';
     }
 
     public function isAvailable() : bool
     {
         return self::$ffi!==null;
-        //$isAvailable = FFIEnvRuntime::isAvailable();
-        //if(!$isAvailable) {
-        //    return false;
-        //}
-        //$pathname = FFIEnvLocator::resolve(...$this->libs);
-        //return $pathname!==null;
     }
 
     public function PlatformList() : PlatformList
     {
         if(self::$ffi==null) {
-            throw new RuntimeException('opencl library not loaded.');
+            throw new RuntimeException($this->getStatusMessage());
         }
         return new PlatformList(self::$ffi);
     }
@@ -88,7 +116,7 @@ class OpenCLFactory
     ) : DeviceList
     {
         if(self::$ffi==null) {
-            throw new RuntimeException('opencl library not loaded.');
+            throw new RuntimeException($this->getStatusMessage());
         }
         return new DeviceList(self::$ffi,$platforms,$index,$deviceType);
     }
@@ -98,7 +126,7 @@ class OpenCLFactory
     ) : Context
     {
         if(self::$ffi==null) {
-            throw new RuntimeException('opencl library not loaded.');
+            throw new RuntimeException($this->getStatusMessage());
         }
         return new Context(self::$ffi,$arg);
     }
@@ -108,7 +136,7 @@ class OpenCLFactory
     ) : EventList
     {
         if(self::$ffi==null) {
-            throw new RuntimeException('opencl library not loaded.');
+            throw new RuntimeException($this->getStatusMessage());
         }
         return new EventList(self::$ffi, $context);
     }
@@ -120,7 +148,7 @@ class OpenCLFactory
     ) : CommandQueue
     {
         if(self::$ffi==null) {
-            throw new RuntimeException('opencl library not loaded.');
+            throw new RuntimeException($this->getStatusMessage());
         }
         return new CommandQueue(self::$ffi, $context, $deviceId, $properties);
     }
@@ -137,7 +165,7 @@ class OpenCLFactory
         ) : Program
     {
         if(self::$ffi==null) {
-            throw new RuntimeException('opencl library not loaded.');
+            throw new RuntimeException($this->getStatusMessage());
         }
         return new Program(self::$ffi, $context, $source, $mode, $deviceList, $options);
     }
@@ -152,7 +180,7 @@ class OpenCLFactory
         ) : Buffer
     {
         if(self::$ffi==null) {
-            throw new RuntimeException('opencl library not loaded.');
+            throw new RuntimeException($this->getStatusMessage());
         }
         return new Buffer(self::$ffi, $context, $size, $flags, $hostBuffer, $hostOffset, $dtype);
     }
@@ -164,7 +192,7 @@ class OpenCLFactory
         ) : Kernel
     {
         if(self::$ffi==null) {
-            throw new RuntimeException('opencl library not loaded.');
+            throw new RuntimeException($this->getStatusMessage());
         }
         return new Kernel(self::$ffi, $program, $kernelName);
     }

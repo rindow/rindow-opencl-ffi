@@ -22,7 +22,7 @@ Requirements
 - interop-phpobjects/polite-math 1.0.5 or later
 - FFI-Buffer in the Interop php objects for Math. (ex. rindow/rindow-math-buffer-ffi)
 - OpenCL 1.2 ICL loader and OpenCL 1.1/1.2 drivers
-- Windows / Linux
+- Windows 10/11, Ubuntu(Recommendation 22.04-)/Debian (Recommendation 12-)
 
 AMD GPU/APU and Intel integrated GPU drivers for Windows are including OpenCL drivers.
 If you want to use it on Linux, you need to explicitly install the OpenCL driver.
@@ -184,3 +184,7 @@ for($i=0;$i<$NWITEMS;$i++) {
 }
 echo "\n";
 ```
+
+To Do
+=====
+We have never verified OpenCL functionality on macOS. As OpenCL is not the recommended approach on macOS, it's a lower priority, but we welcome assistance from anyone who can test in a macOS environment.

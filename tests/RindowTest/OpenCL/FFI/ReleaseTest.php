@@ -15,6 +15,8 @@ class ReleaseTest extends TestCase
             if($factory->isAvailable()) {
                 $platforms = $factory->PlatformList();
                 $this->assertInstanceof(PlatformList::class,$platforms);
+            } else {
+                $this->assertFalse($factory->isAvailable());
             }
         } else {
             $this->assertFalse($factory->isAvailable());
